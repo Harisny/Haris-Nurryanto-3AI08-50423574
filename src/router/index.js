@@ -1,7 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Beranda from "../views/Beranda.vue";
 import MainLayout from "../Layouts/MainLayout.vue";
-import BookPublish from "../views/BookPublish.vue";
+import Beranda from "../views/Beranda.vue";
+import DaftarBuku from "../views/buku/DaftarBuku.vue";
+import TambahBuku from "../views/buku/TambahBuku.vue";
+import EditBuku from "../views/buku/EditBuku.vue";
+import DetailBuku from "../views/buku/DetailBuku.vue";
+import PinjamBuku from "../views/pinjaman/PinjamBuku.vue";
+import DaftarPinjaman from "../views/pinjaman/DaftarPinjaman.vue";
 
 const routes = [
   {
@@ -14,9 +19,34 @@ const routes = [
         component: Beranda,
       },
       {
-        path: "terbit-buku",
-        name: "Penerbitan Buku",
-        component: BookPublish,
+        path: "daftar-buku",
+        name: "DaftarBuku",
+        component: DaftarBuku,
+      },
+      {
+        path: "tambah-buku",
+        name: "TambahBuku",
+        component: TambahBuku,
+      },
+      {
+        path: "edit-buku/:id",
+        name: "EditBuku",
+        component: EditBuku,
+      },
+      {
+        path: "detail-buku/:id",
+        name: "DetailBuku",
+        component: DetailBuku,
+      },
+      {
+        path: "daftar-pinjaman",
+        name: "DaftarPinjaman",
+        component: DaftarPinjaman,
+      },
+      {
+        path: "pinjaman-buku",
+        name: "PinjamBuku",
+        component: PinjamBuku,
       },
     ],
   },

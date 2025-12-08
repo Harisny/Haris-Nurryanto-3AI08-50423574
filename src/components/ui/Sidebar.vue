@@ -33,30 +33,30 @@ import {
 } from "@heroicons/vue/24/solid";
 
 const navLinks = reactive([
-  {
-    label: "Penerbitan Buku",
-    route: "/terbit-buku",
-    icon: markRaw(ChevronLeftIcon),
-  },
-  {
-    label: "Pengembalian Buku",
-    route: "/kembali-buku",
-    icon: markRaw(ChevronRightIcon),
-  },
+  // {
+  //   label: "Penerbitan Buku",
+  //   route: "/terbit-buku",
+  //   icon: markRaw(ChevronLeftIcon),
+  // },
   {
     label: "Daftar Semua Buku",
     route: "/daftar-buku",
     icon: markRaw(PlusIcon),
   },
   {
-    label: "Edit/Hapus Buku",
-    route: "/ubah-buku",
-    icon: markRaw(PlusCircleIcon),
+    label: "Daftar Pinjaman",
+    route: "/daftar-pinjaman",
+    icon: markRaw(ChevronRightIcon),
   },
-  {
-    label: "Pengguna",
-    route: "/pengguna",
-    icon: markRaw(UsersIcon),
-  },
+  // {
+  //   label: "Edit/Hapus Buku",
+  //   route: "/ubah-buku",
+  //   icon: markRaw(PlusCircleIcon),
+  // },
+  // {
+  //   label: "Pengguna",
+  //   route: "/pengguna",
+  //   icon: markRaw(UsersIcon),
+  // },
 ]);
 </script>
