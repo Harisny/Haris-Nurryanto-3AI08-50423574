@@ -40,7 +40,7 @@ const handleUpdateBook = async (formData) => {
     if (response.data && response.data.success) {
       Swal.fire({
         title: "Berhasil!",
-        text: `Buku ID ${bookId} berhasil diperbarui!`,
+        text: `Buku lu ${bookId} berhasil diperbarui!`,
         icon: "success",
         timer: 1500,
         showConfirmButton: false,
@@ -50,17 +50,14 @@ const handleUpdateBook = async (formData) => {
     } else {
       Swal.fire({
         title: "Gagal Memperbarui",
-        text:
-          response.data.message ||
-          "Kesalahan tak dikenal saat memperbarui buku.",
+        text: response.data.message,
         icon: "error",
       });
     }
   } catch (error) {
-    console.error("Gagal memperbarui buku:", error);
     Swal.fire({
       title: "Error Jaringan",
-      text: "Terjadi kesalahan saat memperbarui data buku.",
+      text: "Terjadi kesalahan saat memperbarui data buku / emang internet lu yang empruy",
       icon: "error",
     });
   }

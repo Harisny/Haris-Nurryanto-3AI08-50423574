@@ -23,22 +23,13 @@ const handleCreateBook = async (formData) => {
       }).then(() => {
         router.push({ name: "DaftarBuku" });
       });
-    } else {
-      Swal.fire({
-        title: "Gagal Menambahkan Buku",
-        text: response.data.message || "Kesalahan tak dikenal.",
-        icon: "error",
-      });
     }
   } catch (error) {
-    console.error("Gagal menambahkan buku:", error.response || error);
-    const errorMessage = error.response
-      ? error.response.data.message || `Status Error: ${error.response.status}`
-      : "Gagal terhubung ke server.";
+    const errorMessage = error.response.data.message;
 
     Swal.fire({
-      title: "Error Server",
-      text: `Terjadi kesalahan saat menyimpan data buku: ${errorMessage}`,
+      title: "Error Server / internet lu elek",
+      text: `kesalahan saat menyimpan buku: ${errorMessage}`,
       icon: "error",
     });
   }

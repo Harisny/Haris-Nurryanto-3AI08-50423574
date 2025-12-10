@@ -11,37 +11,33 @@ const book = ref(null);
 
 const API_BASE_URL = "http://localhost:8080/api";
 
-const fetchBookDetail = async () => {
-  console.log(`Fetching detail for book ID: ${bookId}`);
+const fetchBukuDetail = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/book/${bookId}`);
-    console.log(`boook id ${bookId}`);
 
     if (response.data && response.data.success) {
       book.value = response.data.data;
     } else {
-      console.error("Respons API tidak valid atau gagal:", response.value);
       book.value = null;
       Swal.fire({
         title: "Gagal Memuat",
-        text: "Detail buku tidak ditemukan.",
+        text: "buku gabisa di panggil",
         icon: "error",
       });
     }
   } catch (error) {
-    console.error("Error fetching book detail:", error);
     book.value = null;
 
     Swal.fire({
-      title: "Error Jaringan",
-      text: "Terjadi kesalahan saat menghubungi server.",
+      title: "Error jaringan, Internet kau empruy",
+      text: "jaringan lu empruyy",
       icon: "error",
     });
   }
 };
 
 onMounted(() => {
-  fetchBookDetail();
+  fetchBukuDetail();
 });
 </script>
 

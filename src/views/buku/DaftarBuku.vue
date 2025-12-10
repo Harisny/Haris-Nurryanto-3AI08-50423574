@@ -18,20 +18,20 @@ const fetchBuku = async () => {
       books.value = [];
     }
   } catch (error) {
-    console.error("Gagal fetching semua buku: ", error);
+    console.error("gabisa fetching semua buku: ", error);
   }
 };
 
 const KonfirmasiHapusBuku = (bookId) => {
   Swal.fire({
     title: "Konfirmasi Hapus Buku",
-    text: "Apakah Anda yakin ingin menghapus buku ini? Tindakan ini tidak dapat dibatalkan.",
+    text: "udah yakin menghapus buku ini?",
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#d33",
     cancelButtonColor: "#3085d6",
-    confirmButtonText: "Ya, Hapus",
-    cancelButtonText: "Batal",
+    confirmButtonText: "yes, sir!",
+    cancelButtonText: "gajadi",
   }).then((result) => {
     if (result.isConfirmed) {
       hapusBuku(bookId);
@@ -53,11 +53,11 @@ const hapusBuku = async (id) => {
 
     await fetchBuku();
   } catch (error) {
-    console.error("Error deleting book:", error);
+    console.error("Error hapus buku:", error);
 
     Swal.fire({
-      title: "Gagal!",
-      text: `Gagal menghapus buku ID ${id}.`,
+      title: "Gagal cuy!",
+      text: `error masseh gabisa hapus bukunya -> ${id}.`,
       icon: "error",
     });
   }

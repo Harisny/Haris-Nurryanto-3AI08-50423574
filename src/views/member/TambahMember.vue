@@ -24,6 +24,14 @@ const handleCreateMember = async (formData) => {
     }
   } catch (error) {
     console.error("Gagal menambahkan member:", error.response || error);
+
+    const errorMessage = error.response.data.message;
+
+    Swal.fire({
+      title: "Error",
+      text: errorMessage,
+      icon: "error",
+    });
   }
 };
 </script>

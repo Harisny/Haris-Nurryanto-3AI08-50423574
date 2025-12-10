@@ -50,7 +50,7 @@ const hapusMember = async (id) => {
 
     Swal.fire({
       title: "Berhasil!",
-      text: `Member ID ${id} berhasil dihapus.`,
+      text: `Member ${id} berhasil dihapus.`,
       icon: "success",
       timer: 2000,
       showConfirmButton: false,
@@ -58,10 +58,9 @@ const hapusMember = async (id) => {
 
     await fetchMember();
   } catch (error) {
-    console.error("Error deleting member:", error);
     Swal.fire({
       title: "Gagal!",
-      text: `Gagal menghapus Member ID ${id}.`,
+      text: `Gagal menghapus Member${id}.`,
       icon: "error",
     });
   }

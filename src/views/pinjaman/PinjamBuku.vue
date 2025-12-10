@@ -2,7 +2,7 @@
 import { useRouter } from "vue-router";
 import FormPinjaman from "../../components/pinjaman/FormPinjaman.vue";
 import axios from "axios";
-import Swal from "sweetalert2"; // Impor SweetAlert2
+import Swal from "sweetalert2";
 
 const router = useRouter();
 const API = "http://localhost:8080/api";
@@ -22,8 +22,7 @@ const membuatPinjaman = async (formData) => {
         router.push({ name: "DaftarPinjaman" });
       });
     } else {
-      const errorMessage =
-        response.data.message || "Kesalahan server yang tidak terdeteksi.";
+      const errorMessage = response.data.message;
       Swal.fire({
         title: "Gagal Membuat Pinjaman",
         text: errorMessage,
@@ -33,13 +32,10 @@ const membuatPinjaman = async (formData) => {
   } catch (error) {
     console.error("Gagal meminjam:", error.response || error);
 
-    const errorMessage = error.response
-      ? error.response.data.message ||
-        `Status Error: ${error.response.status}. Gagal memproses permintaan.`
-      : "Gagal terhubung ke server.";
+    const errorMessage = error.response.data.data.returnDate;
 
     Swal.fire({
-      title: "Error Jaringan/Server",
+      title: "Error Server",
       text: errorMessage,
       icon: "error",
     });

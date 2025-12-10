@@ -29,13 +29,13 @@ const fetchPinjaman = async () => {
 const konfirmasiPengembalian = (loanId) => {
   Swal.fire({
     title: "Konfirmasi Pengembalian Buku",
-    text: "Apakah Anda yakin ingin menandai pinjaman ini sebagai 'DIKEMBALIKAN'? Status buku akan diperbarui.",
+    text: "pastikan buku sudah'DIKEMBALIKAN'? Status buku akan diperbarui.",
     icon: "question",
     showCancelButton: true,
     confirmButtonColor: "#38a169",
     cancelButtonColor: "#6b7280",
-    confirmButtonText: "Ya, Kembalikan",
-    cancelButtonText: "Batal",
+    confirmButtonText: "Yes, balikin",
+    cancelButtonText: "gajadi",
   }).then((result) => {
     if (result.isConfirmed) {
       balikinBuku(loanId);
@@ -45,24 +45,30 @@ const konfirmasiPengembalian = (loanId) => {
 
 const balikinBuku = async (id) => {
   try {
-    await axios.put(`${API}/return/${id}`, {
+    const response = await axios.put(`${API}/return/${id}`, {
       status: "RETURNED",
     });
-
-    Swal.fire({
-      title: "Berhasil!",
-      text: `Pinjaman ID ${id} berhasil dikembalikan.`,
-      icon: "success",
-      timer: 2000,
-      showConfirmButton: false,
-    });
+    if (response.data && response.data.success) {
+      Swal.fire({
+        title: "Berhasil!",
+        text: `Pinjaman ID ${id} udah di balikin`,
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    } else {
+      Swal.fire({
+        title: "Gagal Menambahkan Buku",
+        text: response.data.message,
+        icon: "error",
+      });
+    }
 
     await fetchPinjaman();
   } catch (error) {
-    console.error("Error pengembalian pinjaman: ", error);
     Swal.fire({
       title: "Gagal!",
-      text: `Gagal memproses pengembalian Pinjaman ID ${id}.`,
+      text: `error dari server atau emang internet lu jelek ID ${id}.`,
       icon: "error",
     });
   }

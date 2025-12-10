@@ -18,7 +18,6 @@ const fetchMemberData = async () => {
     if (response.data && response.data.success) {
       memberData.value = response.data.data;
     } else {
-      console.error("Respons API tidak valid atau gagal:", response.data);
       memberData.value = null;
     }
   } catch (error) {
@@ -27,7 +26,7 @@ const fetchMemberData = async () => {
   }
 };
 
-const handleUpdateMember = async (formData) => {
+const updateMember = async (formData) => {
   try {
     const response = await axios.put(`${API}/member/${memberId}`, formData);
     if (response.data && response.data.success) {
@@ -40,15 +39,14 @@ const handleUpdateMember = async (formData) => {
       }).then(() => {
         router.push({ name: "DaftarMember" });
       });
-    } else {
-      Swal.fire({
-        title: "Gagal Memperbarui",
-        text: response.data.message || "Kesalahan tak terdeteksi.",
-        icon: "error",
-      });
     }
   } catch (error) {
-    console.error("Gagal fetching member");
+    const errorMessage = error.response.data.message;
+    Swal.fire({
+      title: "Gagal Memperbarui",
+      text: errorMessage,
+      icon: "error",
+    });
   }
 };
 
@@ -71,7 +69,7 @@ onMounted(() => {
       <FormMember
         :initialData="memberData"
         :isEditMode="true"
-        @submit-form="handleUpdateMember"
+        @submit-form="updateMember"
       />
     </div>
   </div>
