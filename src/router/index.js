@@ -7,6 +7,9 @@ import EditBuku from "../views/buku/EditBuku.vue";
 import DetailBuku from "../views/buku/DetailBuku.vue";
 import PinjamBuku from "../views/pinjaman/PinjamBuku.vue";
 import DaftarPinjaman from "../views/pinjaman/DaftarPinjaman.vue";
+import DaftarMember from "../views/member/DaftarMember.vue";
+import TambahMember from "../views/member/TambahMember.vue";
+import EditMember from "../views/member/EditMember.vue";
 
 const routes = [
   {
@@ -47,6 +50,21 @@ const routes = [
         path: "pinjaman-buku",
         name: "PinjamBuku",
         component: PinjamBuku,
+      },
+      {
+        path: "daftar-member",
+        name: "DaftarMember",
+        component: DaftarMember,
+      },
+      {
+        path: "tambah-member",
+        name: "TambahMember",
+        component: TambahMember,
+      },
+      {
+        path: "edit-member/:id",
+        name: "EditMember",
+        component: EditMember,
       },
     ],
   },

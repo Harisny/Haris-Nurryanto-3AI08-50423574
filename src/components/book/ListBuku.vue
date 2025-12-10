@@ -18,34 +18,44 @@ const emits = defineEmits(["hapusBuku"]);
       <thead class="bg-gray-50">
         <tr>
           <th
-            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-3/12"
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider w-3/12"
           >
-            Title
+            ID BUKU
           </th>
           <th
-            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-2/12"
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider w-3/12"
           >
-            Author
+            JUDUL
           </th>
           <th
-            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-2/12"
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider w-2/12"
           >
-            Category
+            PENULIS
           </th>
           <th
-            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-2/12"
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider w-2/12"
           >
-            Status
+            KATEGORI
           </th>
           <th
-            class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-2/12"
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider w-2/12"
           >
-            Action
+            STATUS
+          </th>
+          <th
+            class="px-6 py-3 text-center text-xs font-medium text-gray-500 tracking-wider w-2/12"
+          >
+            AKSI
           </th>
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-gray-200">
-        <tr v-for="book in books" :key="book.id">
+        <tr v-for="book in props.books" :key="book.id">
+          <td
+            class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+          >
+            {{ book.id }}
+          </td>
           <td
             class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
           >
@@ -59,16 +69,13 @@ const emits = defineEmits(["hapusBuku"]);
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
             <span
-              class="px-3 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
-              v-if="book.available === true"
+              class="px-3 inline-flex text-xs leading-5 font-semibold rounded-full"
+              :class="{
+                'bg-green-100 text-green-800': book.available === true,
+                'bg-red-100 text-red-800': book.available === false,
+              }"
             >
-              Yes
-            </span>
-            <span
-              class="px-3 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800"
-              v-else="book.available === false"
-            >
-              No
+              {{ book.available ? "Yes" : "No" }}
             </span>
           </td>
           <td
@@ -78,25 +85,25 @@ const emits = defineEmits(["hapusBuku"]);
               :to="{ name: 'DetailBuku', params: { id: book.id } }"
               class="text-blue-600 hover:text-blue-900"
             >
-              Detail
+              DETAIL
             </RouterLink>
 
             <RouterLink
               :to="{ name: 'EditBuku', params: { id: book.id } }"
               class="text-blue-600 hover:text-blue-900"
             >
-              Edit
+              EDIT
             </RouterLink>
 
             <button
-              @click="$emit('hapus-buku', book.id)"
+              @click="emits('hapusBuku', book.id)"
               class="text-red-600 hover:text-red-900"
             >
-              Hapus
+              HAPUS
             </button>
           </td>
         </tr>
-        <tr v-if="books.length === 0">
+        <tr v-if="props.books.length === 0">
           <td colspan="6" class="text-center py-8 text-gray-500">
             Tidak ada data buku yang tersedia.
           </td>

@@ -33,11 +33,6 @@ import {
 } from "@heroicons/vue/24/solid";
 
 const navLinks = reactive([
-  // {
-  //   label: "Penerbitan Buku",
-  //   route: "/terbit-buku",
-  //   icon: markRaw(ChevronLeftIcon),
-  // },
   {
     label: "Daftar Semua Buku",
     route: "/daftar-buku",
@@ -48,15 +43,10 @@ const navLinks = reactive([
     route: "/daftar-pinjaman",
     icon: markRaw(ChevronRightIcon),
   },
-  // {
-  //   label: "Edit/Hapus Buku",
-  //   route: "/ubah-buku",
-  //   icon: markRaw(PlusCircleIcon),
-  // },
-  // {
-  //   label: "Pengguna",
-  //   route: "/pengguna",
-  //   icon: markRaw(UsersIcon),
-  // },
+  {
+    label: "Daftar Member",
+    route: "/daftar-member",
+    icon: markRaw(PlusCircleIcon),
+  },
 ]);
 </script>

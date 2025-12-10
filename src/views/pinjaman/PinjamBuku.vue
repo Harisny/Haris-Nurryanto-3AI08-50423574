@@ -2,44 +2,47 @@
 import { useRouter } from "vue-router";
 import FormPinjaman from "../../components/pinjaman/FormPinjaman.vue";
 import axios from "axios";
+import Swal from "sweetalert2"; // Impor SweetAlert2
 
 const router = useRouter();
-const API_BASE_URL = "http://localhost:8080/api";
+const API = "http://localhost:8080/api";
 
-const membuatPinjamn = async (formData) => {
+const membuatPinjaman = async (formData) => {
   try {
-    // formData sekarang berisi member dan book sebagai NUMBER
-    const response = await axios.post(`${API_BASE_URL}/borrow`, formData);
+    const response = await axios.post(`${API}/borrow`, formData);
 
     if (response.data && response.data.success) {
-      alert("Pinjaman berhasil dibuat!");
-      router.push({ name: "DaftarPinjaman" });
+      Swal.fire({
+        title: "Berhasil!",
+        text: "Pinjaman buku berhasil diajukan.",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      }).then(() => {
+        router.push({ name: "DaftarPinjaman" });
+      });
     } else {
-      // Tangani respons sukses 200 yang isinya kegagalan logika
-      alert(
-        "Gagal membuat pinjaman: " +
-          (response.data.message || "Kesalahan server yang tidak terdeteksi.")
-      );
+      const errorMessage =
+        response.data.message || "Kesalahan server yang tidak terdeteksi.";
+      Swal.fire({
+        title: "Gagal Membuat Pinjaman",
+        text: errorMessage,
+        icon: "error",
+      });
     }
   } catch (error) {
-    // Penanganan Error (untuk 400 Bad Request atau lainnya)
-    console.error("Gagal meminjam:", error);
+    console.error("Gagal meminjam:", error.response || error);
 
-    if (error.response) {
-      const status = error.response.status;
-      let message = "Terjadi kesalahan yang tidak terduga.";
+    const errorMessage = error.response
+      ? error.response.data.message ||
+        `Status Error: ${error.response.status}. Gagal memproses permintaan.`
+      : "Gagal terhubung ke server.";
 
-      if (error.response.data && error.response.data.message) {
-        message = error.response.data.message;
-      } else if (status === 400) {
-        message =
-          "Data yang dikirim tidak valid. Pastikan ID Anggota dan ID Buku benar dan tersedia.";
-      }
-
-      alert(`Gagal membuat pinjaman (${status}): ${message}`);
-    } else {
-      alert("Gagal terhubung ke server. Periksa koneksi Anda.");
-    }
+    Swal.fire({
+      title: "Error Jaringan/Server",
+      text: errorMessage,
+      icon: "error",
+    });
   }
 };
 </script>
@@ -48,7 +51,7 @@ const membuatPinjamn = async (formData) => {
   <div class="p-6">
     <h2 class="text-3xl font-bold text-gray-800 mb-6">Ajukan Pinjaman Baru</h2>
     <div class="bg-white shadow-lg rounded-lg p-6">
-      <FormPinjaman @submit-form="membuatPinjamn" />
+      <FormPinjaman @submit-form="membuatPinjaman" />
     </div>
   </div>
 </template>

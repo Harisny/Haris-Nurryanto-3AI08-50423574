@@ -1,19 +1,16 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import ListBuku from "../../components/book/ListBuku.vue";
-import KonfirmasiHapus from "../../components/ui/KonfirmasiHapus.vue";
-
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const books = ref([]);
-const tampil = ref(false);
-const bookToDelete = ref(null);
 
-const API_BASE_URL = "http://localhost:8080/api";
+const API = "http://localhost:8080/api";
 
 const fetchBuku = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/books`);
+    const response = await axios.get(`${API}/books`);
 
     if (response.data && response.data.success) {
       books.value = response.data.data;
@@ -22,35 +19,52 @@ const fetchBuku = async () => {
     }
   } catch (error) {
     console.error("Gagal fetching semua buku: ", error);
-    alert("Error nih buku lu");
+  }
+};
+
+const KonfirmasiHapusBuku = (bookId) => {
+  Swal.fire({
+    title: "Konfirmasi Hapus Buku",
+    text: "Apakah Anda yakin ingin menghapus buku ini? Tindakan ini tidak dapat dibatalkan.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Ya, Hapus",
+    cancelButtonText: "Batal",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      hapusBuku(bookId);
+    }
+  });
+};
+
+const hapusBuku = async (id) => {
+  try {
+    await axios.delete(`${API}/book/${id}`);
+
+    Swal.fire({
+      title: "Berhasil!",
+      text: `Buku ID ${id} berhasil dihapus.`,
+      icon: "success",
+      timer: 2000,
+      showConfirmButton: false,
+    });
+
+    await fetchBuku();
+  } catch (error) {
+    console.error("Error deleting book:", error);
+
+    Swal.fire({
+      title: "Gagal!",
+      text: `Gagal menghapus buku ID ${id}.`,
+      icon: "error",
+    });
   }
 };
 
 const Konfirmasi = (bookId) => {
-  bookToDelete.value = bookId;
-  tampil.value = true;
-};
-
-const hapusBuku = async () => {
-  if (!bookToDelete.value) return;
-
-  try {
-    const id = bookToDelete.value;
-    await axios.delete(`${API_BASE_URL}/book/${id}`);
-    alert(`Buku ID ${id} berhasil dihapus.`);
-
-    tampil.value = false;
-    bookToDelete.value = null;
-    await fetchBuku();
-  } catch (error) {
-    console.error("Error deleting book:", error);
-    alert(`Gagal menghapus buku ID ${bookToDelete.value}.`);
-  }
-};
-
-const batalHapus = () => {
-  tampil.value = false;
-  bookToDelete.value = null;
+  KonfirmasiHapusBuku(bookId);
 };
 
 onMounted(() => {
@@ -72,15 +86,5 @@ onMounted(() => {
     </div>
 
     <ListBuku :books="books" @hapus-buku="Konfirmasi" />
-
-    <KonfirmasiHapus
-      :isVisible="tampil"
-      title="Konfirmasi Hapus Buku"
-      message="Apakah Anda yakin ingin menghapus buku ini? Tindakan ini tidak dapat dibatalkan."
-      confirmButtonText="Ya, Hapus"
-      cancelButtonText="Batal"
-      @confirm="hapusBuku"
-      @cancel="batalHapus"
-    />
   </div>
 </template>

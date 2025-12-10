@@ -18,5 +18,4 @@
 </template>
 
 <script setup>
-// Composition API script setup
 </script>

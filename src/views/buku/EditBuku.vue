@@ -3,54 +3,66 @@ import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import FormBuku from "../../components/book/FormBuku.vue";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const route = useRoute();
 const router = useRouter();
 const bookId = route.params.id;
 const bookData = ref(null);
-const loading = ref(true);
 
-const API_BASE_URL = "http://localhost:8080/api";
+const API = "http://localhost:8080/api";
 
 const fetchBookData = async () => {
-  loading.value = true;
-  console.log(`Fetching data for book ID: ${bookId}`);
-
   try {
-    const response = await axios.get(`${API_BASE_URL}/book/${bookId}`);
+    const response = await axios.get(`${API}/book/${bookId}`);
     if (response.data && response.data.success) {
       bookData.value = response.data.data;
     } else {
       console.error("Respons API tidak valid atau gagal:", response.data);
-      books.value = null;
+      bookData.value = null;
+
+      Swal.fire({
+        title: "Gagal Memuat",
+        text: "Detail buku tidak ditemukan.",
+        icon: "error",
+      });
     }
   } catch (error) {
     console.error("Error fetching book data:", error);
     bookData.value = null;
-  } finally {
-    loading.value = false;
   }
 };
 
 const handleUpdateBook = async (formData) => {
   try {
-    const response = await axios.put(
-      `${API_BASE_URL}/book/${bookId}`,
-      formData
-    );
-    if (response.data && response.data.succes) {
-      router.push({ name: "DaftarBuku" });
+    const response = await axios.put(`${API}/book/${bookId}`, formData);
+
+    if (response.data && response.data.success) {
+      Swal.fire({
+        title: "Berhasil!",
+        text: `Buku ID ${bookId} berhasil diperbarui!`,
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      }).then(() => {
+        router.push({ name: "DaftarBuku" });
+      });
     } else {
-      alert(
-        "Gagal memperbarui buku: " +
-          (response.data.message || "Kesalahan tak dikenal.")
-      );
+      Swal.fire({
+        title: "Gagal Memperbarui",
+        text:
+          response.data.message ||
+          "Kesalahan tak dikenal saat memperbarui buku.",
+        icon: "error",
+      });
     }
-    alert(`Buku ID ${bookId} berhasil diperbarui!`);
-    router.push({ name: "DaftarBuku" });
   } catch (error) {
     console.error("Gagal memperbarui buku:", error);
-    alert("Terjadi kesalahan saat memperbarui data buku.");
+    Swal.fire({
+      title: "Error Jaringan",
+      text: "Terjadi kesalahan saat memperbarui data buku.",
+      icon: "error",
+    });
   }
 };
 
@@ -63,10 +75,11 @@ onMounted(() => {
     <h2 class="text-3xl font-bold text-gray-800 mb-6">
       Perbarui Buku ID : {{ bookId }}
     </h2>
-    <div v-if="loading" class="text-center py-10">Memuat data buku...</div>
-    <div v-else-if="!bookData" class="text-center py-10 text-red-600">
-      Buku tidak ditemukan.
+
+    <div v-if="bookData === null" class="text-center py-10 text-red-600">
+      Buku tidak ditemukan atau gagal memuat data.
     </div>
+
     <div v-else class="bg-white shadow-lg rounded-lg p-6">
       <FormBuku
         :initialData="bookData"

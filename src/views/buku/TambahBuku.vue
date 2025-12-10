@@ -2,28 +2,33 @@
 import { useRouter } from "vue-router";
 import FormBuku from "../../components/book/FormBuku.vue";
 import axios from "axios";
-import { ref } from "vue";
+import Swal from "sweetalert2";
 
 const router = useRouter();
-const API_BASE_URL = "http://localhost:8080/api";
-
-const isSubmitting = ref(false);
+const API = "http://localhost:8080/api";
 
 const handleCreateBook = async (formData) => {
-  isSubmitting.value = true;
   console.log("Menyiapkan data untuk POST /api/book...");
 
   try {
-    const response = await axios.post(`${API_BASE_URL}/book`, formData);
+    const response = await axios.post(`${API}/book`, formData);
 
     if (response.data && response.data.success) {
-      alert("Buku berhasil ditambahkan!");
-      router.push({ name: "DaftarBuku" });
+      Swal.fire({
+        title: "Berhasil!",
+        text: "Buku berhasil ditambahkan!",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      }).then(() => {
+        router.push({ name: "DaftarBuku" });
+      });
     } else {
-      alert(
-        "Gagal menambahkan buku: " +
-          (response.data.message || "Kesalahan tak dikenal.")
-      );
+      Swal.fire({
+        title: "Gagal Menambahkan Buku",
+        text: response.data.message || "Kesalahan tak dikenal.",
+        icon: "error",
+      });
     }
   } catch (error) {
     console.error("Gagal menambahkan buku:", error.response || error);
@@ -31,9 +36,11 @@ const handleCreateBook = async (formData) => {
       ? error.response.data.message || `Status Error: ${error.response.status}`
       : "Gagal terhubung ke server.";
 
-    alert(`Terjadi kesalahan saat menyimpan data buku: ${errorMessage}`);
-  } finally {
-    isSubmitting.value = false;
+    Swal.fire({
+      title: "Error Server",
+      text: `Terjadi kesalahan saat menyimpan data buku: ${errorMessage}`,
+      icon: "error",
+    });
   }
 };
 </script>

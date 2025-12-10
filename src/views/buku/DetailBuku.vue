@@ -1,10 +1,58 @@
+<script setup>
+import { ref, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import axios from "axios";
+import Swal from "sweetalert2";
+
+const route = useRoute();
+const router = useRouter();
+const bookId = route.params.id;
+const book = ref(null);
+
+const API_BASE_URL = "http://localhost:8080/api";
+
+const fetchBookDetail = async () => {
+  console.log(`Fetching detail for book ID: ${bookId}`);
+  try {
+    const response = await axios.get(`${API_BASE_URL}/book/${bookId}`);
+    console.log(`boook id ${bookId}`);
+
+    if (response.data && response.data.success) {
+      book.value = response.data.data;
+    } else {
+      console.error("Respons API tidak valid atau gagal:", response.value);
+      book.value = null;
+      Swal.fire({
+        title: "Gagal Memuat",
+        text: "Detail buku tidak ditemukan.",
+        icon: "error",
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching book detail:", error);
+    book.value = null;
+
+    Swal.fire({
+      title: "Error Jaringan",
+      text: "Terjadi kesalahan saat menghubungi server.",
+      icon: "error",
+    });
+  }
+};
+
+onMounted(() => {
+  fetchBookDetail();
+});
+</script>
+
 <template>
   <div class="p-6">
     <h2 class="text-3xl font-bold text-gray-800 mb-6">Detail Buku</h2>
-    <div v-if="loading" class="text-center py-10">Memuat detail buku...</div>
-    <div v-else-if="!book" class="text-center py-10 text-red-600">
-      Buku tidak ditemukan.
+
+    <div v-if="book === null" class="text-center py-10 text-red-600">
+      Buku tidak ditemukan atau gagal dimuat.
     </div>
+
     <div
       v-else
       class="bg-white shadow-lg rounded-lg p-8 grid grid-cols-1 md:grid-cols-3 gap-8"
@@ -37,16 +85,13 @@
           <div>
             <p class="text-sm font-semibold text-gray-500">Status</p>
             <span
-              class="px-3 inline-flex text-xs leading-5 font-semibold bg-green-100 text-green-800"
-              v-if="book.available === true"
+              class="px-3 inline-flex text-xs leading-5 font-semibold"
+              :class="{
+                'bg-green-100 text-green-800': book.available === true,
+                'bg-red-100 text-red-800': book.available === false,
+              }"
             >
-              Tersedia
-            </span>
-            <span
-              class="px-3 inline-flex text-xs leading-5 font-semibold bg-red-100 text-red-800"
-              v-else="book.available === false"
-            >
-              Belum Tersedia
+              {{ book.available ? "Tersedia" : "Belum Tersedia" }}
             </span>
           </div>
           <div>
@@ -73,51 +118,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import axios from "axios";
-
-const route = useRoute();
-const router = useRouter();
-const bookId = route.params.id;
-const book = ref(null);
-const loading = ref(true);
-
-const API_BASE_URL = "http://localhost:8080/api";
-
-const fetchBookDetail = async () => {
-  loading.value = true;
-  console.log(`Fetching detail for book ID: ${bookId}`);
-  try {
-    if (!bookId) {
-      console.error(
-        "Kesalahan: bookId tidak ditemukan di URL. Cek konfigurasi rute."
-      );
-      loading.value = false;
-      // Pilihan: Redirect ke halaman daftar atau tampilkan pesan error
-      // router.push({ name: 'BookList' });
-      return;
-    }
-    const response = await axios.get(`${API_BASE_URL}/book/${bookId}`);
-    console.log(`boook id ${bookId}`);
-
-    if (response.data && response.data.success) {
-      book.value = response.data.data;
-    } else {
-      console.error("Respons API tidak valid atau gagal:", response.value);
-      book.value = null;
-    }
-  } catch (error) {
-    console.error("Error fetching book detail:", error);
-    book.value = null;
-  } finally {
-    loading.value = false;
-  }
-};
-
-onMounted(() => {
-  fetchBookDetail();
-});
-</script>

@@ -1,20 +1,16 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import ListPinjaman from "../../components/pinjaman/ListPinjaman.vue";
-import KonfirmasiAksi from "../../components/ui/KonfirmasiHapus.vue";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const loans = ref([]);
-const tampil = ref(false);
-const loanToUpdate = ref(null);
-const isLoading = ref(false);
 
-const API_BASE_URL = "http://localhost:8080/api";
+const API = "http://localhost:8080/api";
 
 const fetchPinjaman = async () => {
-  isLoading.value = true;
   try {
-    const response = await axios.get(`${API_BASE_URL}/history`);
+    const response = await axios.get(`${API}/history`);
     if (response.data && response.data.success) {
       loans.value = response.data.data;
     } else {
@@ -22,42 +18,54 @@ const fetchPinjaman = async () => {
     }
   } catch (error) {
     console.error("Gagal fetching semua pinjaman: ", error);
-    alert("Terjadi kesalahan saat memuat data pinjaman.");
-  } finally {
-    isLoading.value = false;
+    Swal.fire({
+      title: "Error",
+      text: "Terjadi kesalahan saat memuat data pinjaman.",
+      icon: "error",
+    });
   }
 };
 
 const konfirmasiPengembalian = (loanId) => {
-  loanToUpdate.value = loanId;
-  tampil.value = true;
+  Swal.fire({
+    title: "Konfirmasi Pengembalian Buku",
+    text: "Apakah Anda yakin ingin menandai pinjaman ini sebagai 'DIKEMBALIKAN'? Status buku akan diperbarui.",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#38a169",
+    cancelButtonColor: "#6b7280",
+    confirmButtonText: "Ya, Kembalikan",
+    cancelButtonText: "Batal",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      balikinBuku(loanId);
+    }
+  });
 };
 
-const balikinBuku = async () => {
-  if (!loanToUpdate.value) return;
-
+const balikinBuku = async (id) => {
   try {
-    const id = loanToUpdate.value;
-
-    await axios.put(`${API_BASE_URL}/return/${id}`, {
+    await axios.put(`${API}/return/${id}`, {
       status: "RETURNED",
     });
 
-    alert(`Pinjaman ID ${id} berhasil dikembalikan.`);
-
-    tampil.value = false;
-    loanToUpdate.value = null;
+    Swal.fire({
+      title: "Berhasil!",
+      text: `Pinjaman ID ${id} berhasil dikembalikan.`,
+      icon: "success",
+      timer: 2000,
+      showConfirmButton: false,
+    });
 
     await fetchPinjaman();
   } catch (error) {
     console.error("Error pengembalian pinjaman: ", error);
-    alert("Gagal memproses pengembalian buku.");
+    Swal.fire({
+      title: "Gagal!",
+      text: `Gagal memproses pengembalian Pinjaman ID ${id}.`,
+      icon: "error",
+    });
   }
-};
-
-const batalAksi = () => {
-  tampil.value = false;
-  loanToUpdate.value = null;
 };
 
 onMounted(() => {
@@ -78,24 +86,6 @@ onMounted(() => {
       </RouterLink>
     </div>
 
-    <div v-if="isLoading" class="text-center py-10 text-gray-500">
-      Memuat data pinjaman...
-    </div>
-
-    <ListPinjaman
-      v-else
-      :loans="loans"
-      @kembali-pinjaman="konfirmasiPengembalian"
-    />
-
-    <KonfirmasiAksi
-      :isVisible="tampil"
-      title="Konfirmasi Pengembalian Buku"
-      message="Apakah Anda yakin ingin menandai pinjaman ini sebagai 'DIKEMBALIKAN'? Status buku akan diperbarui."
-      confirmButtonText="Ya, Kembalikan"
-      cancelButtonText="Batal"
-      @confirm="balikinBuku"
-      @cancel="batalAksi"
-    />
+    <ListPinjaman :loans="loans" @kembali-pinjaman="konfirmasiPengembalian" />
   </div>
 </template>

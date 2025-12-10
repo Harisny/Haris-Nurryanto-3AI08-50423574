@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, defineProps, defineEmits, watchEffect } from "vue";
+import { reactive, watchEffect } from "vue";
 
 const props = defineProps({
   initialData: {
@@ -25,7 +25,6 @@ const formData = reactive({
 
 watchEffect(() => {
   if (props.initialData) {
-    // Memuat data awal untuk mode edit
     formData.member_id = props.initialData.member || "";
     formData.book_id = props.initialData.book || "";
     formData.returnDate = props.initialData.returnDate || "";
@@ -34,7 +33,6 @@ watchEffect(() => {
 });
 
 const submitForm = () => {
-  // Data yang dipancarkan. member dan book adalah tipe NUMBER berkat modifier di template.
   const dataToSend = {
     member: formData.member_id,
     book: formData.book_id,
@@ -55,7 +53,7 @@ const submitForm = () => {
       <input
         type="text"
         id="member_id"
-        v-model.number="formData.member_id"
+        v-model="formData.member_id"
         required
         class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
       />
@@ -68,7 +66,7 @@ const submitForm = () => {
       <input
         type="text"
         id="book_id"
-        v-model.number="formData.book_id"
+        v-model="formData.book_id"
         required
         class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
       />
@@ -95,7 +93,8 @@ const submitForm = () => {
         id="status"
         v-model="formData.status"
         required
-        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
+        :disabled="!props.isEditMode"
+        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100 disabled:text-gray-500"
       >
         <option value="" disabled>Pilih Status</option>
         <option v-for="status in loanStatuses" :key="status" :value="status">
